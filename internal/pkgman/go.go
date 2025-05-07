@@ -5,13 +5,15 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/Tatsuyasan/lazyPm/internal/models"
 )
 
 type GoPM struct {
 	Dir string
 }
 
-func NewGoPM(dir string) PackageManager {
+func NewGoPM(dir string) models.PackageManager {
 	return &GoPM{Dir: dir}
 }
 

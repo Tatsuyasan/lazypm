@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Tatsuyasan/lazyPm/helpers"
-	"github.com/Tatsuyasan/lazyPm/internal/pkgman"
+	"github.com/Tatsuyasan/lazyPm/internal/helpers"
+	"github.com/Tatsuyasan/lazyPm/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func NewRunCommand(pmFlag *string) *cobra.Command {
 			script := args[0]
 			scriptArgs := args[1:]
 
-			return helpers.WithManager(*pmFlag, func(pm pkgman.PackageManager) error {
+			return helpers.WithManager(*pmFlag, func(pm models.PackageManager) error {
 				fmt.Printf("Running script '%s' with %s\n", script, pm.Name())
 				return pm.RunScript(script, scriptArgs)
 			})

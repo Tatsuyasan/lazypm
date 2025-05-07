@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Tatsuyasan/lazyPm/helpers"
-	"github.com/Tatsuyasan/lazyPm/internal/pkgman"
+	"github.com/Tatsuyasan/lazyPm/internal/helpers"
+	"github.com/Tatsuyasan/lazyPm/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ func NewInstallCommand(pmFlag *string) *cobra.Command {
 		Short:   "Install project dependencies using the detected or forced package manager",
 		Args:    cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return helpers.WithManager(*pmFlag, func(pm pkgman.PackageManager) error {
+			return helpers.WithManager(*pmFlag, func(pm models.PackageManager) error {
 				fmt.Println("Installing dependencies with", pm.Name())
 				return pm.Install(args)
 			})

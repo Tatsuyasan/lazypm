@@ -1,4 +1,4 @@
-package pkgman
+package models
 
 type PackageManager interface {
 	Name() string

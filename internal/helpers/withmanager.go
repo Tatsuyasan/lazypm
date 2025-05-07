@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Tatsuyasan/lazyPm/internal/models"
 	"github.com/Tatsuyasan/lazyPm/internal/pkgman"
 )
 
-func WithManager(pmFlag string, cb func(pkgman.PackageManager) error) error {
+func WithManager(pmFlag string, cb func(models.PackageManager) error) error {
 	dir, _ := os.Getwd()
 
 	manager, err := getPackageManagerByFlagManager(pmFlag, dir)
@@ -18,7 +19,7 @@ func WithManager(pmFlag string, cb func(pkgman.PackageManager) error) error {
 	return cb(manager)
 }
 
-func getPackageManagerByFlagManager(pmFlag, dir string) (pkgman.PackageManager, error) {
+func getPackageManagerByFlagManager(pmFlag, dir string) (models.PackageManager, error) {
 	if pmFlag != "" {
 		switch pmFlag {
 		case "npm":
@@ -30,7 +31,7 @@ func getPackageManagerByFlagManager(pmFlag, dir string) (pkgman.PackageManager, 
 		}
 	}
 
-	manager, err := pkgman.DetectPackageManager(dir)
+	manager, err := DetectPackageManager(dir)
 	if err != nil {
 		return nil, err
 	}
