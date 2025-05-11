@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Tatsuyasan/lazyPm/internal/helpers"
-	"github.com/Tatsuyasan/lazyPm/internal/models"
+	"github.com/Tatsuyasan/lazyPm/packages/helpers"
+	"github.com/Tatsuyasan/lazyPm/packages/models"
 	"github.com/spf13/cobra"
 )
 

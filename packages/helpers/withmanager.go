@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Tatsuyasan/lazyPm/internal/models"
-	"github.com/Tatsuyasan/lazyPm/internal/pkgman"
+	"github.com/Tatsuyasan/lazyPm/packages/models"
+	"github.com/Tatsuyasan/lazyPm/packages/pkgman"
 )
 
 func WithManager(pmFlag string, cb func(models.PackageManager) error) error {

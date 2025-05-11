@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/Tatsuyasan/lazyPm/internal/models"
+	"github.com/Tatsuyasan/lazyPm/packages/models"
 )
 
 const (
@@ -65,16 +65,14 @@ func (n *NPM) ListScripts() ([]string, error) {
 }
 
 func (n *NPM) ListDependencies() ([]string, error) {
-	cmd := exec.Command(packageManagerCmd, "ls", "--depth=0", "--json")
-	cmd.Dir = n.Dir
-	out, err := cmd.Output()
+	data, err := n.readFile(packageManagerFile)
 	if err != nil {
 		return nil, err
 	}
 
 	var parsed models.PackageManagerFile
 
-	if err := json.Unmarshal(out, &parsed); err != nil {
+	if err := json.Unmarshal(data, &parsed); err != nil {
 		return nil, err
 	}
 
@@ -83,4 +81,9 @@ func (n *NPM) ListDependencies() ([]string, error) {
 		dependencies = append(dependencies, name)
 	}
 	return dependencies, nil
+}
+
+func (n *NPM) readFile(filename string) ([]byte, error) {
+	packageJSONPath := filepath.Join(n.Dir, filename)
+	return os.ReadFile(packageJSONPath)
 }

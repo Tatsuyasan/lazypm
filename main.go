@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Tatsuyasan/lazyPm/cmd"
+	"github.com/Tatsuyasan/lazyPm/packages/cmd"
 )
 
 func main() {

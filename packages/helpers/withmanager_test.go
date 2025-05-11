@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Tatsuyasan/lazyPm/internal/models"
+	"github.com/Tatsuyasan/lazyPm/packages/models"
 )
 
 type WithManagerTest struct {

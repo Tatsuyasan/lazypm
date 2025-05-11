@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/Tatsuyasan/lazyPm/internal/models"
+	"github.com/Tatsuyasan/lazyPm/packages/models"
 )
 
 type GoPM struct {

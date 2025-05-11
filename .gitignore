@@ -23,3 +23,9 @@ go.work.sum
 
 # custom
 lpm
+
+# for testing
+package.json
+package-lock.json
+
+app.log
