@@ -3,25 +3,25 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Tatsuyasan/lazyPm/packages/helpers"
 	"github.com/Tatsuyasan/lazyPm/packages/models"
 	"github.com/spf13/cobra"
 )
 
 func NewRunCommand(pmFlag *string) *cobra.Command {
-	cmd := &cobra.Command{
+	return createManagerCommand(pmFlag, CommandConfig{
 		Use:   "run [script]",
 		Short: "Run a script using the appropriate package manager",
 		Args:  cobra.MinimumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunFunc: func(pm models.PackageManager, args []string) error {
+			if len(args) == 0 {
+				return fmt.Errorf("script name is required")
+			}
+			
 			script := args[0]
 			scriptArgs := args[1:]
-
-			return helpers.WithManager(*pmFlag, func(pm models.PackageManager) error {
-				fmt.Printf("Running script '%s' with %s\n", script, pm.Name())
-				return pm.RunScript(script, scriptArgs)
-			})
+			
+			fmt.Printf("Running script '%s' with %s\n", script, pm.Name())
+			return pm.RunScript(script, scriptArgs)
 		},
-	}
-	return cmd
+	})
 }

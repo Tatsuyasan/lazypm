@@ -14,21 +14,25 @@ func NewRootCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "lpm",
 		Short: "A CLI-agnostic wrapper for package managers",
+		Long:  "LazyPM is a CLI-agnostic wrapper that provides a unified interface for package managers like npm, go modules, and more.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return helpers.WithManager(pmFlag, func(manager models.PackageManager) error {
-				fmt.Println("package manager detected :", manager.Name())
+				fmt.Printf("Package manager detected: %s\n", manager.Name())
 				return nil
 			})
 		},
 	}
 
-	// flags for command root
 	cmd.Flags().StringVarP(&pmFlag, "manager", "m", "", "Force the package manager (e.g., npm, go)")
 
-	// add subcommands here to root command
 	cmd.AddCommand(NewInstallCommand(&pmFlag))
 	cmd.AddCommand(NewRunCommand(&pmFlag))
 	cmd.AddCommand(NewListCommand(&pmFlag))
+	cmd.AddCommand(NewInitCommand(&pmFlag))
+	cmd.AddCommand(NewBuildCommand(&pmFlag))
+	cmd.AddCommand(NewTestCommand(&pmFlag))
+	cmd.AddCommand(NewUpdateCommand(&pmFlag))
+	cmd.AddCommand(NewCleanCommand(&pmFlag))
 	cmd.AddCommand(NewGUICommand())
 
 	return cmd

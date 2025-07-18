@@ -83,6 +83,22 @@ func (n *NPM) ListDependencies() ([]string, error) {
 	return dependencies, nil
 }
 
+func (n *NPM) ListCommands() ([]string, error) {
+	return []string{
+		"init",
+		"install",
+		"build",
+		"test",
+		"update",
+		"clean",
+		"audit",
+		"publish",
+		"version",
+		"start",
+		"dev",
+	}, nil
+}
+
 func (n *NPM) readFile(filename string) ([]byte, error) {
 	packageJSONPath := filepath.Join(n.Dir, filename)
 	return os.ReadFile(packageJSONPath)

@@ -31,7 +31,7 @@ func (g *GoPM) Install(args []string) error {
 }
 
 func (g *GoPM) RunScript(script string, args []string) error {
-	return fmt.Errorf("go ne supporte pas les scripts personnalisés")
+	return fmt.Errorf("Go does not support custom scripts. Use commands instead (e.g., build, test, run)")
 }
 
 func (g *GoPM) ListScripts() ([]string, error) {
@@ -53,4 +53,21 @@ func (g *GoPM) ListDependencies() ([]string, error) {
 	}
 	// Skip first line (main module)
 	return lines[1:], nil
+}
+
+func (g *GoPM) ListCommands() ([]string, error) {
+	return []string{
+		"init",
+		"build",
+		"test",
+		"run",
+		"mod tidy",
+		"mod download",
+		"get",
+		"install",
+		"clean",
+		"fmt",
+		"vet",
+		"version",
+	}, nil
 }

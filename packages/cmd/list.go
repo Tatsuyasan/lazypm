@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/Tatsuyasan/lazyPm/packages/helpers"
 	"github.com/Tatsuyasan/lazyPm/packages/models"
 	"github.com/spf13/cobra"
 )
@@ -14,39 +11,36 @@ func NewListCommand(pmFlag *string) *cobra.Command {
 		Short: "List scripts or dependencies",
 	}
 
-	cmd.AddCommand(&cobra.Command{
+	scriptsCmd := createManagerCommand(pmFlag, CommandConfig{
 		Use:   "scripts",
 		Short: "List available scripts",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return helpers.WithManager(*pmFlag, func(pm models.PackageManager) error {
-				scripts, err := pm.ListScripts()
-				if err != nil {
-					return err
-				}
-				for _, s := range scripts {
-					fmt.Println(s)
-				}
-				return nil
-			})
+		Args:  cobra.NoArgs,
+		RunFunc: func(pm models.PackageManager, args []string) error {
+			scripts, err := pm.ListScripts()
+			if err != nil {
+				return err
+			}
+			PrintList(scripts)
+			return nil
 		},
 	})
 
-	cmd.AddCommand(&cobra.Command{
+	depsCmd := createManagerCommand(pmFlag, CommandConfig{
 		Use:   "deps",
 		Short: "List project dependencies",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return helpers.WithManager(*pmFlag, func(pm models.PackageManager) error {
-				deps, err := pm.ListDependencies()
-				if err != nil {
-					return err
-				}
-				for _, d := range deps {
-					fmt.Println(d)
-				}
-				return nil
-			})
+		Args:  cobra.NoArgs,
+		RunFunc: func(pm models.PackageManager, args []string) error {
+			deps, err := pm.ListDependencies()
+			if err != nil {
+				return err
+			}
+			PrintList(deps)
+			return nil
 		},
 	})
+
+	cmd.AddCommand(scriptsCmd)
+	cmd.AddCommand(depsCmd)
 
 	return cmd
 }

@@ -6,4 +6,5 @@ type PackageManager interface {
 	ListScripts() ([]string, error)
 	ListDependencies() ([]string, error)
 	Install(args []string) error
+	ListCommands() ([]string, error)
 }

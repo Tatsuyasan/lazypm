@@ -9,7 +9,10 @@ import (
 )
 
 func WithManager(pmFlag string, cb func(models.PackageManager) error) error {
-	dir, _ := os.Getwd()
+	dir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get current working directory: %w", err)
+	}
 
 	manager, err := getPackageManagerByFlagManager(pmFlag, dir)
 	if err != nil {
