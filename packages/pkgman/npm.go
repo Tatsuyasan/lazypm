@@ -1,3 +1,4 @@
+// Package pkgman defines the interface and implementations for package managers.
 package pkgman
 
 import (
@@ -6,47 +7,42 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/Tatsuyasan/lazyPm/packages/context"
 	"github.com/Tatsuyasan/lazyPm/packages/models"
 )
 
-const (
-	packageManagerFile = "package.json"
-	packageManagerCmd  = "npm"
-)
+type Npm struct{}
 
-type NPM struct {
-	Dir string
+func NewNpm() *Npm {
+	return &Npm{}
 }
 
-func NewNPM(dir string) models.PackageManager {
-	return &NPM{Dir: dir}
-}
+// Install implements models.PackageManager.
+func (n Npm) Install(args []string) error {
+	ctx := context.GetContext()
 
-func (n *NPM) Name() string {
-	return packageManagerCmd
-}
-
-func (n *NPM) Install(args []string) error {
 	cmdArgs := append([]string{"install"}, args...)
-	cmd := exec.Command(packageManagerCmd, cmdArgs...)
-	cmd.Dir = n.Dir
+	cmd := exec.Command(ctx.Manager.Name(), cmdArgs...)
+	cmd.Dir = "."
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
 
-func (n *NPM) RunScript(script string, args []string) error {
-	cmdArgs := append([]string{"run", script}, args...)
-	cmd := exec.Command(packageManagerCmd, cmdArgs...)
-	cmd.Dir = n.Dir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+// ListCommands implements models.PackageManager.
+func (n Npm) ListCommands() ([]string, error) {
+	panic("unimplemented")
 }
 
-func (n *NPM) ListScripts() ([]string, error) {
-	pkgJsonPath := filepath.Join(n.Dir, packageManagerFile)
-	data, err := os.ReadFile(pkgJsonPath)
+// ListDependencies implements models.PackageManager.
+func (n Npm) ListDependencies() ([]string, error) {
+	panic("unimplemented")
+}
+
+// ListScripts implements models.PackageManager.
+func (n Npm) ListScripts() ([]context.ScriptInfo, error) {
+	path := filepath.Join(".", "package.json")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -57,49 +53,20 @@ func (n *NPM) ListScripts() ([]string, error) {
 		return nil, err
 	}
 
-	var scripts []string
-	for name := range pkg.Scripts {
-		scripts = append(scripts, name)
+	var scripts []context.ScriptInfo
+	for name, desc := range pkg.Scripts {
+		scripts = append(scripts, context.ScriptInfo{Name: name, Description: desc})
 	}
+
 	return scripts, nil
 }
 
-func (n *NPM) ListDependencies() ([]string, error) {
-	data, err := n.readFile(packageManagerFile)
-	if err != nil {
-		return nil, err
-	}
-
-	var parsed models.PackageManagerFile
-
-	if err := json.Unmarshal(data, &parsed); err != nil {
-		return nil, err
-	}
-
-	var dependencies []string
-	for name := range parsed.Dependencies {
-		dependencies = append(dependencies, name)
-	}
-	return dependencies, nil
+// Name implements models.PackageManager.
+func (n Npm) Name() string {
+	return "npm"
 }
 
-func (n *NPM) ListCommands() ([]string, error) {
-	return []string{
-		"init",
-		"install",
-		"build",
-		"test",
-		"update",
-		"clean",
-		"audit",
-		"publish",
-		"version",
-		"start",
-		"dev",
-	}, nil
-}
-
-func (n *NPM) readFile(filename string) ([]byte, error) {
-	packageJSONPath := filepath.Join(n.Dir, filename)
-	return os.ReadFile(packageJSONPath)
+// RunScript implements models.PackageManager.
+func (n Npm) RunScript(script string, args []string) error {
+	panic("unimplemented")
 }

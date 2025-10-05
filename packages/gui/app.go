@@ -1,81 +1,39 @@
+// Package gui provides the Bubble Tea-based user interface for lazyPm.
 package gui
 
 import (
-	"log"
-
-	"github.com/Tatsuyasan/lazyPm/packages/gui/components"
-	"github.com/Tatsuyasan/lazyPm/packages/gui/config"
-	"github.com/Tatsuyasan/lazyPm/packages/gui/handlers"
-	"github.com/Tatsuyasan/lazyPm/packages/gui/views"
-	"github.com/jroimartin/gocui"
+	"github.com/Tatsuyasan/lazyPm/packages/context"
+	"github.com/Tatsuyasan/lazyPm/packages/gui/views/scripts"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
-type LazyPmGUI struct {
-	gui           *gocui.Gui
-	layoutManager *components.LayoutManager
-	keyBindings   *config.KeyBindings
-	keyHandler    *handlers.KeyBindingHandler
+type MainAppModel struct {
+	scriptsModel scripts.ScriptsModel
 }
 
-func RunGUI() error {
-	g, err := gocui.NewGui(gocui.OutputNormal)
-	if err != nil {
-		log.Panicln(err)
-	}
-	defer g.Close()
-
-	lazyPmGUI := NewLazyPmGUI(g)
-
-	if err := lazyPmGUI.Setup(); err != nil {
-		log.Panicln(err)
-	}
-
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Panicln(err)
-	}
-
-	return nil
+func (m MainAppModel) Init() tea.Cmd {
+	return m.scriptsModel.Init()
 }
 
-func NewLazyPmGUI(g *gocui.Gui) *LazyPmGUI {
-	layoutManager := components.NewLayoutManager()
-	keyBindings := config.GetDefaultKeyBindings()
-	keyHandler := handlers.NewKeyBindingHandler(layoutManager, keyBindings)
-
-	return &LazyPmGUI{
-		gui:           g,
-		layoutManager: layoutManager,
-		keyBindings:   keyBindings,
-		keyHandler:    keyHandler,
-	}
+func (m MainAppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	newModel, cmd := m.scriptsModel.Update(msg)
+	m.scriptsModel = newModel.(scripts.ScriptsModel)
+	return m, cmd
 }
 
-func (lpg *LazyPmGUI) Setup() error {
-	lpg.gui.Highlight = true
-	lpg.gui.SelFgColor = gocui.ColorGreen
-	lpg.gui.Cursor = true
-
-	lpg.gui.FgColor = gocui.ColorWhite
-
-	lpg.createPanels()
-
-	lpg.gui.SetManagerFunc(lpg.layoutManager.Layout)
-
-	if err := lpg.keyHandler.SetupKeyBindings(lpg.gui); err != nil {
-		return err
-	}
-
-	return nil
+func (m MainAppModel) View() string {
+	return m.scriptsModel.View()
 }
 
-func (lpg *LazyPmGUI) createPanels() {
-	packageManagerView := views.NewPackageManagerView()
-	packagesView := views.NewPackagesView()
-	dependenciesView := views.NewDependenciesView()
-	scriptsView := views.NewScriptsView()
+func RunGui() {
+	ctx := context.GetContext()
 
-	lpg.layoutManager.AddPanel(packageManagerView)
-	lpg.layoutManager.AddPanel(packagesView)
-	lpg.layoutManager.AddPanel(dependenciesView)
-	lpg.layoutManager.AddPanel(scriptsView)
+	items, _ := ctx.Manager.ListScripts()
+
+	model := MainAppModel{
+		scriptsModel: scripts.NewScriptsModel(items),
+	}
+
+	p := tea.NewProgram(model)
+	p.Run()
 }
